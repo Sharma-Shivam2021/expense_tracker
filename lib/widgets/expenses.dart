@@ -1,10 +1,9 @@
-import 'dart:convert';
 import 'package:expense_tracker/widgets/chart/chart.dart';
 import 'package:expense_tracker/widgets/expenses_list/expenses_list.dart';
 import 'package:expense_tracker/models/expense.dart';
 import 'package:expense_tracker/widgets/new_expense.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:expense_tracker/widgets/App Logic/expenses_logic.dart';
 
 class Expenses extends StatefulWidget {
   const Expenses({super.key});
@@ -14,8 +13,8 @@ class Expenses extends StatefulWidget {
 }
 
 class _ExpensesState extends State<Expenses> {
-  final List<Expense> _registeredExpense = [];
-  late SharedPreferences _preferences;
+  final ExpensesLogic _expensesLogic = ExpensesLogic();
+  late List<Expense> _registeredExpense = [];
 
   @override
   void initState() {
@@ -24,24 +23,16 @@ class _ExpensesState extends State<Expenses> {
   }
 
   Future<void> _loadExpense() async {
-    _preferences = await SharedPreferences.getInstance();
-    final String expenseData = _preferences.getString('expenses') ?? '[]';
-    final List<dynamic> decodedData = json.decode(expenseData);
+    final List<Expense> loadedExpense = await _expensesLogic.loadExpenses();
     setState(
       () {
-        _registeredExpense.clear();
-        _registeredExpense.addAll(
-          decodedData.map(
-            (item) => Expense.fromJson(item),
-          ),
-        );
+        _registeredExpense = loadedExpense;
       },
     );
   }
 
   Future<void> _saveExpense() async {
-    final String expensesData = json.encode(_registeredExpense);
-    await _preferences.setString('expenses', expensesData);
+    await _expensesLogic.saveExpense(_registeredExpense);
   }
 
   void _openAddExpenseModal() {
@@ -59,7 +50,7 @@ class _ExpensesState extends State<Expenses> {
 
   void _addExpense(Expense expense) {
     setState(() {
-      _registeredExpense.add(expense);
+      _expensesLogic.addExpense(_registeredExpense, expense);
       _saveExpense();
     });
   }
@@ -67,10 +58,10 @@ class _ExpensesState extends State<Expenses> {
   void _removeExpense(Expense expense) {
     final expenseIndex = _registeredExpense.indexOf(expense);
     setState(() {
-      _registeredExpense.remove(expense);
+      _expensesLogic.removeExpense(_registeredExpense, expense);
       _saveExpense();
     });
-    ScaffoldMessenger.of(context).clearSnackBars();
+    // ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         duration: const Duration(seconds: 3),
@@ -80,9 +71,11 @@ class _ExpensesState extends State<Expenses> {
               setState(() {
                 if (expenseIndex >= 0 &&
                     expenseIndex <= _registeredExpense.length) {
-                  _registeredExpense.insert(expenseIndex, expense);
+                  _expensesLogic.addExpense(_registeredExpense, expense);
+                  _saveExpense();
                 } else {
-                  _registeredExpense.add(expense);
+                  _expensesLogic.addExpense(_registeredExpense, expense);
+                  _saveExpense();
                 }
               });
             }),

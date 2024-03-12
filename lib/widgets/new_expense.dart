@@ -1,4 +1,5 @@
 import 'package:expense_tracker/models/expense.dart';
+import 'package:expense_tracker/widgets/App%20Logic/new_expense_logic.dart';
 import 'package:flutter/material.dart';
 
 class NewExpense extends StatefulWidget {
@@ -14,6 +15,8 @@ class _NewExpenseState extends State<NewExpense> {
   final TextEditingController _amountController = TextEditingController();
   Category _selectedCategory = Category.food;
   DateTime? _selectedDate;
+
+  final NewExpenseLogic _newExpenseLogic = NewExpenseLogic();
 
   void _presentDatePicker() async {
     final now = DateTime.now();
@@ -53,13 +56,12 @@ class _NewExpenseState extends State<NewExpense> {
       );
       return;
     }
-    widget.onAddExpense(
-      Expense(
-        title: _titleController.text,
-        amount: enteredAmount,
-        date: _selectedDate!,
-        category: _selectedCategory,
-      ),
+    _newExpenseLogic.submitExpenseData(
+      title: _titleController.text,
+      amount: enteredAmount,
+      selectedDate: _selectedDate!,
+      category: _selectedCategory,
+      onAddExpense: widget.onAddExpense,
     );
     Navigator.pop(context);
   }
@@ -172,8 +174,12 @@ class _NewExpenseState extends State<NewExpense> {
                               Expanded(
                                 child: IconButton(
                                   onPressed: _presentDatePicker,
-                                  icon:
-                                      const Icon(Icons.calendar_month_outlined),
+                                  icon: Icon(
+                                    Icons.calendar_month_outlined,
+                                    color: isDarkTheme
+                                        ? Colors.white
+                                        : Colors.black,
+                                  ),
                                 ),
                               ),
                             ],
