@@ -216,8 +216,12 @@ class _NewExpenseState extends State<NewExpense> {
                               Expanded(
                                 child: IconButton(
                                   onPressed: _presentDatePicker,
-                                  icon:
-                                      const Icon(Icons.calendar_month_outlined),
+                                  icon: Icon(
+                                    Icons.calendar_month_outlined,
+                                    color: isDarkTheme
+                                        ? Colors.white
+                                        : Colors.black,
+                                  ),
                                 ),
                               ),
                             ],
