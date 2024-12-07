@@ -1,14 +1,15 @@
 import 'dart:convert';
-import 'package:expense_tracker/widgets/chart/chart.dart';
-import 'package:expense_tracker/widgets/expenses_list/expenses_list.dart';
-import 'package:expense_tracker/models/expense.dart';
-import 'package:expense_tracker/widgets/new_expense.dart';
+import 'package:expense_tracker/features/balance_sheet/widgets/balance_sheet.dart';
+import 'package:expense_tracker/features/home_screen/models/expense.dart';
+import 'package:expense_tracker/features/home_screen/widgets/chart/chart.dart';
+import 'package:expense_tracker/features/home_screen/widgets/expenses_list/expenses_list.dart';
+import 'package:expense_tracker/features/home_screen/widgets/new_expense.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Expenses extends StatefulWidget {
   const Expenses({super.key});
-
+  static String routeName = '/expenses';
   @override
   State<Expenses> createState() => _ExpensesState();
 }
@@ -91,6 +92,10 @@ class _ExpensesState extends State<Expenses> {
     );
   }
 
+  double getTotalExpenses() {
+    return _registeredExpense.fold(0.0, (sum, expense) => sum + expense.amount);
+  }
+
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
@@ -116,6 +121,36 @@ class _ExpensesState extends State<Expenses> {
             icon: const Icon(Icons.add),
           )
         ],
+      ),
+      drawer: SafeArea(
+        child: Drawer(
+          child: Column(
+            children: [
+              DrawerHeader(
+                child: Center(
+                  child: Text(
+                    'Expense Tracker',
+                    style: TextStyle(fontSize: 20),
+                  ),
+                ),
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(context).popAndPushNamed(
+                        BalanceSheet.routeName,
+                        arguments: getTotalExpenses(),
+                      );
+                    },
+                    child: Text('Balance Sheet'),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
       ),
       body: width < 600
           ? Column(

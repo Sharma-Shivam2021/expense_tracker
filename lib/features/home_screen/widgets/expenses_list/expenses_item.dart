@@ -1,4 +1,4 @@
-import 'package:expense_tracker/models/expense.dart';
+import 'package:expense_tracker/features/home_screen/models/expense.dart';
 import 'package:flutter/material.dart';
 
 class ExpenseItem extends StatelessWidget {
@@ -22,7 +22,7 @@ class ExpenseItem extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('\$${expense.amount.toStringAsFixed(2)}'),
+                Text('₹ ${expense.amount.toStringAsFixed(2)}'),
                 Row(
                   children: [
                     Icon(categoryIcons[expense.category]),

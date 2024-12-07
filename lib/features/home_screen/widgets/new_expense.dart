@@ -1,4 +1,4 @@
-import 'package:expense_tracker/models/expense.dart';
+import 'package:expense_tracker/features/home_screen/models/expense.dart';
 import 'package:flutter/material.dart';
 
 class NewExpense extends StatefulWidget {
@@ -106,7 +106,7 @@ class _NewExpenseState extends State<NewExpense> {
                             controller: _amountController,
                             keyboardType: TextInputType.number,
                             decoration: const InputDecoration(
-                              prefixText: '\$ ',
+                              prefixText: '₹ ',
                               label: Text('Amount'),
                             ),
                           ),
@@ -189,7 +189,7 @@ class _NewExpenseState extends State<NewExpense> {
                             controller: _amountController,
                             keyboardType: TextInputType.number,
                             decoration: const InputDecoration(
-                              prefixText: '\$ ',
+                              prefixText: '₹ ',
                               label: Text('Amount'),
                             ),
                           ),
